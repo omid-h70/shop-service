@@ -20,8 +20,9 @@ type AppHandler struct {
 }
 
 var (
-	ErrInvalidJsonFormat = errors.New("Invalid Json Format")
-	ErrInvalidJsonID     = errors.New("Invalid ID Format")
+	ErrInvalidJsonFormat      = errors.New("Invalid Json Format")
+	ErrInvalidJsonID          = errors.New("Invalid ID Format")
+	ErrInvalidApplicationType = errors.New("Invalid Application Type")
 )
 
 func validateJsonRequest(w http.ResponseWriter, r *http.Request, data any) bool {
@@ -40,8 +41,9 @@ func validateJsonRequest(w http.ResponseWriter, r *http.Request, data any) bool 
 	return true
 }
 
-func (appH *AppHandler) RegisterOrderService(service service.OrderService) {
+func (appH *AppHandler) RegisterOrderService(service service.OrderService, mockurl string) {
 	appH.OrderHandler.service = service
+	appH.mockUrl = mockurl
 }
 
 func (appH *AppHandler) RegisterAgentService(service service.AgentService) {

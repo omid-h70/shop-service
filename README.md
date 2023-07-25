@@ -18,77 +18,75 @@ we have simple makefile in root of our project, currently makefile works on Wind
 will do everything for you to come up and running
 
 ## API Request
-|      URL          |HTTP Method|Discription|
-|----------------|-------------------------------|-----------------------------|
-|`/v1/transfers`|`POST`            |`Make card to card transaction with Given json data   `         |
-|`/v1/report`|`GET`            |`Gets you the Report of last transactions within 10 minutes last`            |
-|`/v1/health`|`ALL METHODS`|`Checks App is up and Runnig`|
+| URL                |HTTP Method| Description                                                       |
+|--------------------|-------------------------------|-------------------------------------------------------------------|
+| `/v1/dealy_report` |`POST`            | `Make a Delay report Based On vendor_id and order_id   `          |
 
+every order or test orders are submitted by default expiration time of 1 (one) minute, if you quickly send delay report request the 
+response will be as below
 
-## Test Endpoints API using Curl
-you can test APIs with curl or post man as follows
- ##### Request
-```
-curl -i --request POST 'http://localhost:8000/v1/transfer' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "from_card_number": "5022291302421266",
-    "to_card_number": "5041721005782710"
-    "transaction_amount": 123456
-}
-```
-##### Response
+Request:
 ```
 {
-    "ReceiverMsg": {
-        "Msg": "\n        واریز\n    5041721005782710\n        به مبلغ\n    123456\n        مانده\n    823456",
-        "To": "+989033934262"
-    },
-    "SenderMsg": {
-        "Msg": "\n        برداشت از\n    5022291302421266\n        به مبلغ\n    123456\n        مانده\n    26044",
-        "To": "+989123993699"
-    },
-    "status": {
-        "Message": "Done"
+	"vendor_id" : "1001",
+	"order_id" : "2001"
+}
+```
+Response:
+```
+{
+    "message": "Delay Time Report Is Invalid - Try After Delivery Time Reached",
+    "result": {
+        "OrderId": 2001,
+        "VendorId": 1001,
+        "CreatedAt": "2023-07-25 12:08:29",
+        "DeliveryTime": "2023-07-25 12:09:29",
+        "OrderStatus": "1"
     }
 }
 ```
 
-it also supports Persian  Or Arabic Numbers like below but of course its and error because of wrong card number pattern !!!
+| URL             |HTTP Method| Description                                    |
+|-----------------|-------------------------------|------------------------------------------------|
+| `/v1/set_agent` |`POST`            | `Sets a Free Agent to an Open Delay Report   ` |
 
- ##### Report Request
- this API will give you the time each vendor has delay time based on minutes
-```curl -i --request GET 'http://localhost:8000/v1/report' ```
-you can give optional parameter as t like
-```curl -i --request GET 'http://localhost:8000/v1/report?t=1000' ```
-it will change the default last 10 minutes time of query to 1000
- ##### Report Response 
- ```
- [
+it will assign an order based on timestamp sorting, and it actually acts like queue
+first report that got submitted, gets assigned first
 
-{
-"CustomerID": "1003",
-"TransactionId": "1006",
-"CardIdFrom": "4003",
-"CardIdTo": "4007",
-"Amount": 123456,
-"TransactionType": 0,
-"TransactionTime": "2023-04-02 07:36:54",
-"Index": 1
-},
-
-{
-"CustomerID": "1004",
-"TransactionId": "1006",
-"CardIdFrom": "4003",
-"CardIdTo": "4007",
-"Amount": 123456,
-"TransactionType": 0,
-"TransactionTime": "2023-04-02 07:36:54",
-"Index": 1
-}
-]
+Request:
 ```
+{
+	"agent_id" : "4001",
+}
+```
+Response:
+```
+{
+    "message": "Done",
+    "result": {
+        "DelayOrderId": 5001,
+        "OrderId": 2001,
+        "VendorId": 1001,
+        "AgentId": 4001,
+        "ReportCount": 1,
+        "CreatedAt": "2023-07-25 12:14:07",
+        "UpdatedAt": "2023-07-25 12:14:07"
+    }
+}
+```
+
+| URL             |HTTP Method| Description                                 |
+|-----------------|-------------------------------|---------------------------------------------|
+| `/v1/v1/handle_delayed_order` |`POST`            | `Handle a Delay Request And Set Agent Free` |
+
+
+| URL             |HTTP Method| Description                                    |
+| `/v1/health`       |`ALL METHODS`| `Checks App is up and Runnig`                                     |
+
+
+## Test Endpoints API using Curl
+you can test APIs with curl or postman 
+
 
 ## Code Status
 still fixing bugs for v1

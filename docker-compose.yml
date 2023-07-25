@@ -34,7 +34,7 @@ services:
     volumes:
       - ./data/db-data:/var/lib/data
       - ./data/initdb:/docker-entrypoint-initdb.d
-    container_name: shop-service-db
+    container_name: ${MYSQL_CONTAINER_NAME}
     deploy:
       mode: replicated
       replicas: 1

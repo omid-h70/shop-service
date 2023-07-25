@@ -8,7 +8,7 @@ import (
 
 type (
 	VendorService interface {
-		GetAllDelayedOrdersByVendor(context.Context, domain.VendorEntity) ([]domain.VendorReportResponse, error)
+		GetAllDelayedOrdersByVendor(context.Context, domain.VendorReportRequest) ([]domain.VendorReportResponse, error)
 	}
 	//
 	VendorServiceImpl struct {
@@ -17,8 +17,8 @@ type (
 	}
 )
 
-func (v VendorServiceImpl) GetAllDelayedOrdersByVendor(context.Context, domain.VendorEntity) ([]domain.VendorReportResponse, error) {
-	return []domain.VendorReportResponse{}, nil
+func (v VendorServiceImpl) GetAllDelayedOrdersByVendor(ctx context.Context, req domain.VendorReportRequest) ([]domain.VendorReportResponse, error) {
+	return v.repo.GetAllVendorsDelayReports(ctx, req)
 }
 
 // NewVendorService do

@@ -12,6 +12,7 @@ import (
 var (
 	ErrDelayReportAlreadyExist = errors.New("Report Already Exist")
 	ErrDelayReportDoesNotExist = errors.New("Report Doesnt Exist")
+	ErrOrderDoesNotExist       = errors.New("Order Doesnt Exist")
 )
 
 type OrderRepositoryMySqlDB struct {
@@ -47,15 +48,10 @@ func (o OrderRepositoryMySqlDB) GetOrderDetails(ctx context.Context, order domai
 		&order.OrderStatus,
 	)
 
-	switch {
-	case err == sql.ErrNoRows:
-		return order, ErrDelayReportDoesNotExist
-	case err != nil:
-		return order, err
+	if err == sql.ErrNoRows {
+		return order, ErrOrderDoesNotExist
 	}
-
-	return order, ErrDelayReportAlreadyExist
-
+	return order, err
 }
 
 func (o OrderRepositoryMySqlDB) InsertDelayReport(ctx context.Context, req domain.DelayReportEntity) (domain.DelayReportEntity, error) {
@@ -112,11 +108,19 @@ func (o OrderRepositoryMySqlDB) UpdateDelayReport(ctx context.Context, req domai
 }
 
 func (o OrderRepositoryMySqlDB) UpdateDelayReportStatus(ctx context.Context, req domain.DelayReportEntity) (bool, error) {
+	//var (
+	//	query string = "UPDATE delay_reports SET delay_report_status = ?, updated_at = now() WHERE (order_id = ? AND agent_id = ?)"
+	//)
+
 	var (
-		query string = "UPDATE delay_reports SET delay_report_status = ?, updated_at = now() WHERE (order_id = ? AND agent_id = ?)"
+		query string = `UPDATE delay_reports ` +
+			`INNER JOIN orders ` +
+			`ON orders.order_id = delay_reports.order_id ` +
+			`SET delay_reports.delay_report_status = ?, orders.delivery_time = now() ` +
+			`WHERE (delay_reports.order_id = ? AND delay_reports.vendor_id = ? AND delay_reports.agent_id = ?) `
 	)
 
-	_, err := o.client.Exec(query, req.DelayReportStatus, req.OrderId, req.AgentId)
+	_, err := o.client.Exec(query, req.DelayReportStatus, req.OrderId, req.VendorId, req.AgentId)
 	if err != nil {
 		return false, err
 	}

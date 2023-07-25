@@ -11,7 +11,7 @@ run:
 	docker-compose up
 	@echo "Docker images started!"
 
-clean: build
+clean:
 	cmd /c if exist ".\data\db-data" cmd /c rmdir /Q /S ".\data\db-data"
 	@echo "Clean and Build"
 	docker-compose down -v

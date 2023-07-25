@@ -26,6 +26,7 @@ func (mux *muxRouter) SetAppHandlers(appH *AppHandler) {
 	api.HandleFunc("/delay_report", appH.handleMakeDelayReport).Methods(http.MethodPost)
 	api.HandleFunc("/get_all_delay_reports", appH.handleGetAllDelayReportsByVendor).Methods(http.MethodGet)
 	api.HandleFunc("/set_agent", appH.handleSetAgentForDelayedOrder).Methods(http.MethodPost)
+	api.HandleFunc("/handle_delayed_order", appH.handleDelayedOrderByAgent).Methods(http.MethodPost)
 	api.HandleFunc("/health", healthCheck)
 }
 

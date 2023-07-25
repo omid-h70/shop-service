@@ -10,19 +10,23 @@ import (
 )
 
 var (
+	mockUrl = "https://run.mocky.io/v3/122c2796-5df4-461c-ab75-87c1192b17f7"
+
 	dbTestClientConfig = repository.MySqlConfig{
 		DbServerAddr: "localhost",
 		DbServerPort: "3306",
 		DbName:       "shop_service_db",
 		DbUser:       "root",
-		//DbPass:       "omid2142", //work workbench pass
-		DbPass: "secret", //homepass
+		DbPass:       "omid2142", //work workbench pass
+		//DbPass: "secret", //homepass
 	}
 	testServerConfig = cmd.ServerConfig{
 		Addr: "0.0.0.0",
 		Port: "8000",
 	}
 )
+
+var build = "debug"
 
 func main() {
 	//Setting Database
@@ -39,8 +43,8 @@ func main() {
 	}
 
 	//Setting Database Test Config
-	//serverConfig = testServerConfig
-	//dbClientConfig = dbTestClientConfig
+	serverConfig = testServerConfig
+	dbClientConfig = dbTestClientConfig
 
 	fmt.Println("Db Config", dbClientConfig)
 	fmt.Println("App Config", serverConfig)
@@ -55,7 +59,7 @@ func main() {
 
 	cmd.NewAppConfig().
 		ServerAddress(serverConfig).
-		RegisterService(appOrderService, appAgentService, appVendorService).
+		RegisterService(appOrderService, appAgentService, appVendorService, mockUrl).
 		Run(handler.NewGorillaMuxRouter())
 
 	fmt.Println("Hi, i'm up")

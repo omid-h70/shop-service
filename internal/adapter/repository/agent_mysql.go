@@ -19,7 +19,7 @@ type AgentRepositoryMySqlDB struct {
 
 func (o AgentRepositoryMySqlDB) FindAgentLastRecord(ctx context.Context, req domain.AgentSetDelayedOrderRequest) (domain.AgentSetDelayedOrderResponse, error) {
 	var (
-		query string = "SELECT delay_report_id, order_id, vendor_id, agent_id, report_count, created_at, updated_at FROM delay_reports WHERE (agent_id= ?)"
+		query string = "SELECT delay_report_id, order_id, vendor_id, agent_id, report_count, created_at, updated_at FROM delay_reports WHERE (agent_id= ? AND delay_report_status ='OPEN')"
 		resp  domain.AgentSetDelayedOrderResponse
 	)
 
@@ -46,7 +46,7 @@ func (o AgentRepositoryMySqlDB) FindAgentLastRecord(ctx context.Context, req dom
 
 func (o AgentRepositoryMySqlDB) SetAgentForDelayedOrder(ctx context.Context, req domain.AgentSetDelayedOrderRequest) (bool, error) {
 	var (
-		query string = "UPDATE delay_reports SET agent_id = ? WHERE agent_id IS NULL ORDER BY created_at LIMIT 1"
+		query string = "UPDATE delay_reports SET agent_id = ? WHERE (agent_id IS NULL AND delay_report_status ='OPEN') ORDER BY created_at ASC LIMIT 1"
 	)
 
 	res, err := o.client.Exec(query, req.AgentId)

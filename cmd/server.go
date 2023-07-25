@@ -24,10 +24,11 @@ func NewAppConfig() *AppConfig {
 
 func (cnf *AppConfig) RegisterService(order service.OrderService,
 	agent service.AgentService,
-	vendor service.VendorService) *AppConfig {
+	vendor service.VendorService,
+	mockurl string) *AppConfig {
 
 	cnf.appHandler.RegisterAgentService(agent)
-	cnf.appHandler.RegisterOrderService(order)
+	cnf.appHandler.RegisterOrderService(order, mockurl)
 	cnf.appHandler.RegisterVendorService(vendor)
 	return cnf
 }

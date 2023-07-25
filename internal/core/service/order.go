@@ -11,6 +11,7 @@ type (
 	OrderService interface {
 		AddNewOrder(ctx context.Context, req domain.AddNewOrderRequest) error
 		GetOrderDetails(ctx context.Context, order domain.OrderEntity) (domain.OrderEntity, error)
+		GetDelayReportDetails(ctx context.Context, order domain.DelayReportEntity) (domain.DelayReportEntity, error)
 		AddOrUpdateDelayReport(ctx context.Context, req domain.DelayReportEntity) (domain.DelayReportEntity, error)
 		HandleDelayReport(ctx context.Context, req domain.DelayReportEntity) (bool, error)
 	}
@@ -24,6 +25,10 @@ type (
 func (t OrderServiceImpl) AddNewOrder(ctx context.Context, req domain.AddNewOrderRequest) error {
 	_, err := t.repo.AddNewOrder(ctx, req)
 	return err
+}
+
+func (t OrderServiceImpl) GetDelayReportDetails(ctx context.Context, order domain.DelayReportEntity) (domain.DelayReportEntity, error) {
+	return t.repo.GetDelayReportByParams(ctx, order)
 }
 
 func (t OrderServiceImpl) GetOrderDetails(ctx context.Context, order domain.OrderEntity) (domain.OrderEntity, error) {

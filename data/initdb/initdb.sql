@@ -1,3 +1,5 @@
+SET time_zone="+3:30";
+
 DROP DATABASE IF EXISTS shop_service_db;
 CREATE DATABASE shop_service_db;
 USE shop_service_db;
@@ -30,6 +32,9 @@ PRIMARY KEY (`order_id`),
 KEY `vendors_fk` (`vendor_id`),
 CONSTRAINT `vendors_fk` FOREIGN KEY (`vendor_id`) REFERENCES `vendors` (`vendor_id`)
 )ENGINE=InnoDB AUTO_INCREMENT = 2007 DEFAULT CHARSET=latin1;
+
+CREATE INDEX `idx_orders_created_at` ON `orders`(`created_at`);
+CREATE INDEX `idx_orders_delivery_time` ON `orders`(`delivery_time`);
 
 INSERT INTO `orders` (`order_id`, `vendor_id`) VALUES
 (2001, 1001),
@@ -80,3 +85,5 @@ KEY `agent_id_fk` (`agent_id`),
 CONSTRAINT `agent_id_fk` FOREIGN KEY (`agent_id`) REFERENCES `agents` (`agent_id`)
 )ENGINE=InnoDB AUTO_INCREMENT = 5001 DEFAULT CHARSET=latin1;
 
+CREATE INDEX `idx_delay_reports_created_at` ON `delay_reports`(`created_at`);
+CREATE INDEX `idx_delay_reports_updated_at` ON `delay_reports`(`updated_at`);

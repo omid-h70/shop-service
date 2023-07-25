@@ -24,10 +24,11 @@ type (
 	}
 
 	VendorReportResponse struct {
-		id string
+		ID        string
+		DelayTime string
 	}
 
 	VendorRepository interface {
-		GetDelayedOrdersByVendor(ctx context.Context, input VendorReportRequest) ([]VendorReportResponse, error)
+		GetAllVendorsDelayReports(ctx context.Context, input VendorReportRequest) ([]VendorReportResponse, error)
 	}
 )

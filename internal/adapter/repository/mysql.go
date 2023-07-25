@@ -21,13 +21,15 @@ func NewRepositoryMySqlDB(c MySqlConfig) *sql.DB {
 		err    error
 	)
 
+	addr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		c.DbUser,
+		c.DbPass,
+		c.DbServerAddr,
+		c.DbServerPort,
+		c.DbName)
+
 	for i := 0; i < 100; i++ {
-		client, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
-			c.DbUser,
-			c.DbPass,
-			c.DbServerAddr,
-			c.DbServerPort,
-			c.DbName))
+		client, err = sql.Open("mysql", addr)
 
 		if err != nil {
 
@@ -36,7 +38,8 @@ func NewRepositoryMySqlDB(c MySqlConfig) *sql.DB {
 		} else {
 			if err = client.Ping(); err != nil {
 				time.Sleep(1 * time.Second)
-				fmt.Println("Waiting For Accepting Connection ...")
+				fmt.Println("Waiting For DB To Be Ready ...")
+				fmt.Println(addr)
 				continue
 			}
 			fmt.Println("Connected in " + fmt.Sprintf("%d", i) + " Attempt")

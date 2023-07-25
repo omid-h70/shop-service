@@ -45,6 +45,24 @@ Response:
     }
 }
 ```
+And if Successful You can get below Response, you can get report submission count as `ReportCount`
+
+```
+{
+    "message": "Done",
+    "result": {
+        "DelayOrderId": 5001,
+        "OrderId": 2001,
+        "VendorId": 1001,
+        "AgentId": 0,
+        "CreatedAt": "2023-07-25 12:14:07",
+        "UpdatedAt": "2023-07-25 12:14:07",
+        "DelayReportStatus": "",
+        "ReportCount": 1
+    }
+}
+```
+
 
 | URL             |HTTP Method| Description                                    |
 |-----------------|-------------------------------|------------------------------------------------|
@@ -87,10 +105,35 @@ Handle a Delay Report And Sets Image Free
 
 Gets All Delay Report Of a Vendor Based On Minute, within 7 Days
 
+Response
+```
+{
+    "message": "Done",
+    "result": [
+        {
+            "ID": "1001",
+            "DelayTime": "9"
+        }
+    ]
+}
+```
+
 | URL          |HTTP Method| Description                                 |
 |--------------|-------------------------------|---------------------------------------------|
 | `/v1/health` |`ALL METHODS`            | `Checks App is up and Runnig` |
 
+Response
+```
+{
+    "message": "Done",
+    "result": [
+        {
+            "ID": "1001",
+            "DelayTime": "9"
+        }
+    ]
+}
+```
 
 ## Test Endpoints API using Curl
 you can test APIs with curl or postman 

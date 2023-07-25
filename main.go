@@ -43,8 +43,8 @@ func main() {
 	}
 
 	//Setting Database Test Config
-	serverConfig = testServerConfig
-	dbClientConfig = dbTestClientConfig
+	//serverConfig = testServerConfig
+	//dbClientConfig = dbTestClientConfig
 
 	fmt.Println("Db Config", dbClientConfig)
 	fmt.Println("App Config", serverConfig)
@@ -61,7 +61,5 @@ func main() {
 		ServerAddress(serverConfig).
 		RegisterService(appOrderService, appAgentService, appVendorService, mockUrl).
 		Run(handler.NewGorillaMuxRouter())
-
-	fmt.Println("Hi, i'm up")
-
+	
 }

@@ -1,0 +1,48 @@
+version: '3'
+services:
+  main-service:
+    env_file:
+      - .env
+    build:
+      context: ../${APP_NAME}
+      dockerfile: ../${APP_NAME}/${APP_NAME}.dockerfile
+    #restart: always
+    ports:
+      - "${APP_HOST_PORT}:${APP_CONTAINER_PORT}"
+    expose:
+      - ${APP_HOST_PORT}
+    deploy:
+      mode: replicated
+      replicas: 1
+    container_name: main-service
+    depends_on:
+      - mysqldb
+  mysqldb:
+    image: mysql
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASS}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASS}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    #restart: always
+    ports:
+      - "${MYSQL_HOST_PORT}:${MYSQL_CONTAINER_PORT}"
+    expose:
+      - "${MYSQL_HOST_PORT}"
+    volumes:
+      - ./data/db-data:/var/lib/data
+      - ./data/initdb:/docker-entrypoint-initdb.d
+    container_name: shop-service-db
+    deploy:
+      mode: replicated
+      replicas: 1
+#    healthcheck:
+#      test: "mysql $$MYSQL_DATABASE -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1;'"
+#      interval: 20s
+#      timeout: 10s
+#      retries: 5
+#volumes:
+#   mysqldb:
+#    driver: local

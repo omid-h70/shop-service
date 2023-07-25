@@ -79,9 +79,17 @@ Response:
 |-----------------|-------------------------------|---------------------------------------------|
 | `/v1/v1/handle_delayed_order` |`POST`            | `Handle a Delay Request And Set Agent Free` |
 
+Handle a Delay Report And Sets Image Free
 
-| URL             |HTTP Method| Description                                    |
-| `/v1/health`       |`ALL METHODS`| `Checks App is up and Runnig`                                     |
+| URL             | HTTP Method | Description                                     |
+|-----------------|-------------|-------------------------------------------------|
+| `/v1/get_all_delay_reports` | `GET`       | `Gets Delay Report Of a Vendor Based On Minute` |
+
+Gets All Delay Report Of a Vendor Based On Minute, within 7 Days
+
+| URL          |HTTP Method| Description                                 |
+|--------------|-------------------------------|---------------------------------------------|
+| `/v1/health` |`ALL METHODS`            | `Checks App is up and Runnig` |
 
 
 ## Test Endpoints API using Curl

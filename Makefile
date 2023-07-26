@@ -24,6 +24,10 @@ down:
 	docker-compose down -v
 	@echo "Done!"
 
+tidy:
+	go mod tidy
+	go mod vendor
+
 build:
 	@echo "Building Service..."
 	chdir ..\shop-service && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${APP_BINARY} .

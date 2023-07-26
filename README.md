@@ -69,7 +69,7 @@ And if Successful You can get below Response, you can get report submission coun
 | `/v1/set_agent` |`POST`            | `Sets a Free Agent to an Open Delay Report   ` |
 
 it will assign an order based on timestamp sorting, and it actually acts like queue
-first report that got submitted, gets assigned first
+first report that got submitted, gets assigned first (FIFO structure)
 
 Request:
 ```
@@ -92,12 +92,40 @@ Response:
     }
 }
 ```
+| URL             |HTTP Method| Description                                                                                                |
+|-----------------|-------------------------------|------------------------------------------------------------------------------------------------------------|
+| `/v1/handle_delayed_order` |`POST`            | `A Delay report got handled by and agent and after that the agent is free and delivery time is updated   ` |
+
+Request
+```
+{
+"agent_id":"4001",
+"vendor_id":"1001",
+"order_id":"2001"
+}
+```
+Response if Report Does not Exist OR Closed
+```
+{
+    "message": "Report Doesnt Exist Or Closed",
+    "result": false
+}
+```
+if new time is assigned by mock service
+
+```
+{
+    "message": "We're Getting New Update Time For Your Order, Please Check Delay Report Status,
+    "result": true
+}
+```
+
 
 | URL             |HTTP Method| Description                                 |
 |-----------------|-------------------------------|---------------------------------------------|
 | `/v1/v1/handle_delayed_order` |`POST`            | `Handle a Delay Request And Set Agent Free` |
 
-Handle a Delay Report And Sets Image Free
+Handle a Delay Report And Sets Agent Free
 
 | URL             | HTTP Method | Description                                     |
 |-----------------|-------------|-------------------------------------------------|
@@ -113,6 +141,10 @@ Response
         {
             "ID": "1001",
             "DelayTime": "9"
+        },
+        {
+            "ID": "1002",
+            "DelayTime": "200"
         }
     ]
 }
@@ -122,18 +154,12 @@ Response
 |--------------|-------------------------------|---------------------------------------------|
 | `/v1/health` |`ALL METHODS`            | `Checks App is up and Runnig` |
 
-Response
-```
-{
-    "message": "Done",
-    "result": [
-        {
-            "ID": "1001",
-            "DelayTime": "9"
-        }
-    ]
-}
-```
+## Sample Data
+Some seeds or preexisting will be injected into our table each time you run make clean,  
+the script is located inside {PROJECT_PATH}/data/initdb/initdb.sql
+By default 5 vendors exist by ids 1001, 1002, 1003, 1004, 1005
+By default 5 orders exist by ids 2001, 2002, 2003, 2004, 2005
+By default 3 agents exist by ids 4001, 4002, 4003
 
 ## Test Endpoints API using Curl
 you can test APIs with curl or postman 

@@ -157,16 +157,18 @@ Response
 ## Sample Data
 Some seeds or preexisting will be injected into our table each time you run make clean,  
 the script is located inside {PROJECT_PATH}/data/initdb/initdb.sql
+```
 By default 5 vendors exist by ids 1001, 1002, 1003, 1004, 1005
 By default 5 orders exist by ids 2001, 2002, 2003, 2004, 2005
 By default 3 agents exist by ids 4001, 4002, 4003
+```
 
 ## Test Endpoints API using Curl
 you can test APIs with curl or postman 
 
 
 ## Code Status
-still fixing bugs for v1
+still fixing bugs for v1 , migaration and better config handling will be added soon
 
 ## Author
 Copyright © 2020 [Omid-h70](https://github.com/omid-h70). This project is MIT licensed. its free to EveryOne,

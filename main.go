@@ -11,14 +11,14 @@ import (
 
 var (
 	mockUrl = "https://run.mocky.io/v3/122c2796-5df4-461c-ab75-87c1192b17f7"
-
+	//
 	dbTestClientConfig = repository.MySqlConfig{
 		DbServerAddr: "localhost",
 		DbServerPort: "3306",
 		DbName:       "shop_service_db",
 		DbUser:       "root",
-		DbPass:       "omid2142", //work workbench pass
-		//DbPass: "secret", //homepass
+		DbPass:       "secret", //home pass
+		//DbPass:       "omid2142", //work workbench pass
 	}
 	testServerConfig = cmd.ServerConfig{
 		Addr: "0.0.0.0",
@@ -26,9 +26,9 @@ var (
 	}
 )
 
-var build = "debug"
-
 func main() {
+
+	build := os.Getenv("BUILD_TYPE")
 	//Setting Database
 	dbClientConfig := repository.MySqlConfig{
 		DbServerAddr: os.Getenv("MYSQL_CONTAINER_NAME"),
@@ -42,17 +42,19 @@ func main() {
 		Port: os.Getenv("APP_HOST_PORT"),
 	}
 
-	//Setting Database Test Config
-	//serverConfig = testServerConfig
-	//dbClientConfig = dbTestClientConfig
+	if build == "local" {
+		serverConfig = testServerConfig
+		dbClientConfig = dbTestClientConfig
+	}
 
-	fmt.Println("Db Config", dbClientConfig)
-	fmt.Println("App Config", serverConfig)
+	fmt.Println("App Starting With")
+	fmt.Println("Build Config", build)
+	fmt.Println("Server Config", serverConfig)
+	fmt.Println("DB Config", serverConfig)
 
 	appDbClient := repository.NewRepositoryMySqlDB(dbClientConfig)
 
 	//Setting Services And Handlers
-
 	appAgentService := service.NewAgentService(repository.NewAgentRepositoryMySqlDB(appDbClient), 1000)
 	appOrderService := service.NewOrderService(repository.NewOrderRepositoryMySqlDB(appDbClient), 1000)
 	appVendorService := service.NewVendorService(repository.NewVendorRepositoryMySqlDB(appDbClient), 1000)
@@ -61,5 +63,5 @@ func main() {
 		ServerAddress(serverConfig).
 		RegisterService(appOrderService, appAgentService, appVendorService, mockUrl).
 		Run(handler.NewGorillaMuxRouter())
-	
+
 }

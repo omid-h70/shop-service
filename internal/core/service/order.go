@@ -45,13 +45,16 @@ func (t OrderServiceImpl) AddOrUpdateDelayReport(ctx context.Context, req domain
 			resp.UpdatedAt = time.Now().String()
 		}
 		return resp, err
-	}
 
-	resp, err = t.repo.InsertDelayReport(ctx, req)
-	if err == nil {
-		resp, err = t.repo.GetDelayReportByParams(ctx, req)
+	} else if err == nil || err == repository.ErrDelayReportDoesNotExist {
+
+		resp, err = t.repo.InsertDelayReport(ctx, req)
+		if err == nil {
+			resp, err = t.repo.GetDelayReportByParams(ctx, req)
+		}
+		return resp, nil
 	}
-	return resp, nil
+	return resp, err
 }
 
 func (t OrderServiceImpl) HandleDelayReport(ctx context.Context, req domain.DelayReportEntity) (bool, error) {

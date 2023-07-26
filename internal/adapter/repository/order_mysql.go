@@ -11,7 +11,7 @@ import (
 
 var (
 	ErrDelayReportAlreadyExist = errors.New("Report Already Exist")
-	ErrDelayReportDoesNotExist = errors.New("Report Doesnt Exist")
+	ErrDelayReportDoesNotExist = errors.New("Report Doesnt Exist Or Closed")
 	ErrOrderDoesNotExist       = errors.New("Order Doesnt Exist")
 )
 
@@ -72,15 +72,33 @@ func (o OrderRepositoryMySqlDB) InsertDelayReport(ctx context.Context, req domai
 
 func (o OrderRepositoryMySqlDB) GetDelayReportByParams(ctx context.Context, req domain.DelayReportEntity) (domain.DelayReportEntity, error) {
 	var (
-		query string = "SELECT delay_report_id, order_id, vendor_id, report_count, created_at, updated_at FROM delay_reports WHERE (order_id = ? AND vendor_id = ?)"
+		query1 string = "SELECT delay_report_id, order_id, vendor_id, report_count, delay_report_status, created_at, updated_at " +
+			"FROM delay_reports WHERE " +
+			"(order_id = ? AND vendor_id = ? AND delay_report_status='OPEN') "
+
+		query2 string = "SELECT delay_report_id, order_id, vendor_id, report_count, delay_report_status, created_at, updated_at " +
+			"FROM delay_reports WHERE " +
+			"(order_id = ? AND vendor_id = ? AND agent_id = ? AND delay_report_status='OPEN') "
+
+		query string
 		resp  domain.DelayReportEntity
 	)
 
-	err := o.client.QueryRowContext(ctx, query, req.OrderId, req.VendorId).Scan(
+	row := &sql.Row{}
+	if req.AgentId == 0 {
+		query = query1
+		row = o.client.QueryRowContext(ctx, query, req.OrderId, req.VendorId)
+	} else {
+		query = query2
+		row = o.client.QueryRowContext(ctx, query, req.OrderId, req.VendorId, req.AgentId)
+	}
+
+	err := row.Scan(
 		&resp.DelayOrderId,
 		&resp.OrderId,
 		&resp.VendorId,
 		&resp.ReportCount,
+		&resp.DelayReportStatus,
 		&resp.CreatedAt,
 		&resp.UpdatedAt,
 	)
@@ -92,7 +110,11 @@ func (o OrderRepositoryMySqlDB) GetDelayReportByParams(ctx context.Context, req 
 		return resp, err
 	}
 
-	return resp, ErrDelayReportAlreadyExist
+	if resp.DelayOrderId > 0 {
+		err = ErrDelayReportAlreadyExist
+	}
+
+	return resp, err
 }
 
 func (o OrderRepositoryMySqlDB) UpdateDelayReport(ctx context.Context, req domain.DelayReportEntity) (bool, error) {

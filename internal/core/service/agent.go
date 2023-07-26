@@ -2,9 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/omid-h70/shop-service/internal/adapter/repository"
 	"github.com/omid-h70/shop-service/internal/core/domain"
 	"time"
+)
+
+var (
+	ErrAgentIsNotValid = errors.New("Agent is Not Valid")
 )
 
 type (
@@ -26,6 +32,10 @@ func (a AgentServiceImpl) SetAgentToDelayedOrder(ctx context.Context, req domain
 		result, err = a.repo.SetAgentForDelayedOrder(ctx, req)
 		if result && err == nil {
 			resp, _ = a.repo.FindAgentLastRecord(ctx, req)
+			//Error is not important here
+		} else if err != nil {
+			fmt.Println(ErrAgentIsNotValid.Error(), err.Error())
+			err = ErrAgentIsNotValid
 		}
 	}
 	return resp, err

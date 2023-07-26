@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrThereIsNoOpenDelayReports = errors.New("There Is No Open Delay Reports")
+	ErrThereIsNoOpenDelayReports = errors.New("There Is No Open Delay Report")
 )
 
 type AgentHandler struct {
@@ -57,8 +57,17 @@ func (a *AgentHandler) handleSetAgentForDelayedOrder(w http.ResponseWriter, r *h
 
 		resp, err = a.service.SetAgentToDelayedOrder(r.Context(), domainReq)
 		if err != nil {
-			msg = ErrThereIsNoOpenDelayReports.Error()
+			response.NewSuccess(err.Error(), "", 200).Send(w)
+			return
 		}
+
+		response.NewSuccess(msg, resp, 200).Send(w)
+		return
 	}
-	response.NewSuccess(msg, resp, 200).Send(w)
+}
+
+func NewAgentHandler(service service.AgentService) AgentHandler {
+	return AgentHandler{
+		service: service,
+	}
 }
